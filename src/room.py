@@ -9,6 +9,8 @@
 #     s_to
 #     w_to
 
+# add list of items to room
+
 class Room:
     def __init__(self, name, descr):
         self.name = name
@@ -17,3 +19,6 @@ class Room:
         self.s_to = "default"
         self.e_to = "default"
         self.w_to = "default"
+        self.items = {}
+    def storeInRoom(self, key, value):
+        self.items[key] = value

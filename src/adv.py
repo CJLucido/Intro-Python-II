@@ -1,5 +1,6 @@
 from room import Room
 from player import Player
+from item import Item
 
 # Declare all the rooms
 
@@ -37,7 +38,19 @@ room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
-#
+# Create Items
+
+items ={
+    'sword' : Item("sword of unyielding effort", """Permanently destroy what it cuts into, effects may be delayed"""),
+    'wand' : Item("wandering wand", """sheds new information on situations with relavent examples from far off places""")
+}
+
+
+# Add items to rooms
+room['outside'].storeInRoom(items['sword'].name, items['sword'].descr)
+
+
+
 # Main
 #
 CJ = Player("Carlo", room['outside'])
@@ -62,17 +75,12 @@ going_toward = input("which direction are you headed? ")
 while not going_toward == "q": 
     # if going_toward not in ["n", "s", "e", "w"]:
     #     print("there's nutin o'er yonder!!")
-    if going_toward == "n" and CJ.current_room.n_to != "default":
-        CJ.current_room = CJ.current_room.n_to
-    elif going_toward == "s" and CJ.current_room.s_to != "default":
-        CJ.current_room = CJ.current_room.s_to
-    elif going_toward == "e" and CJ.current_room.e_to != "default":
-        CJ.current_room = CJ.current_room.e_to
-    elif going_toward == "w" and CJ.current_room.w_to != "default":
-        CJ.current_room = CJ.current_room.w_to
-    else:  #CJ.current_room.n_to == "default" or CJ.current_room.s_to == "default" or CJ.current_room.e_to == "default" or CJ.current_room.w_to == "default":
+
+    if going_toward in ["n", "s", "e", "w"] and getattr(CJ.current_room, f"{going_toward}_to") != "default":
+        CJ.current_room = getattr(CJ.current_room, f"{going_toward}_to")
+    else:  
         print("\r\n There's nutin o'er yonder!! \r\n what exactly are you trying to do")
-    print(f"\r\nCurrent Location: \r\n {CJ.current_room.name} \r\n {CJ.current_room.descr}")
+    print(f"\r\nCurrent Location: \r\n {CJ.current_room.name} \r\n {CJ.current_room.descr} \r\nItems:{CJ.current_room.items}")
     going_toward = input("which direction are you headed? ")
 
 # Make a new player object that is currently in the 'outside' room.
