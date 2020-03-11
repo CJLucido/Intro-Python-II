@@ -61,29 +61,23 @@ going_toward = input("which direction are you headed? ")
 #while NOT q, continue running file
 while not going_toward == "q":
     # going_toward = input("which direction are you headed? ")
+    
     if going_toward not in ["n", "s", "e", "w"]:
         print("there's nutin o'er yonder!!")
     elif going_toward == "n" and CJ.current_room.n_to != "default":
         CJ.current_room = CJ.current_room.n_to
-        print(f"{CJ.current_room.name} \r\n {CJ.current_room.descr}")
-        going_toward = input("which direction are you headed? ")
     elif going_toward == "s" and CJ.current_room.s_to != "default":
         CJ.current_room = CJ.current_room.s_to
-        print(f"{CJ.current_room.name} \r\n {CJ.current_room.descr}")
-        going_toward = input("which direction are you headed? ")
     elif going_toward == "e" and CJ.current_room.e_to != "default":
         CJ.current_room = CJ.current_room.e_to
-        print(f"{CJ.current_room.name} \r\n {CJ.current_room.descr}")
-        going_toward = input("which direction are you headed? ")
     elif going_toward == "w" and CJ.current_room.w_to != "default":
         CJ.current_room = CJ.current_room.w_to
-        print(f"{CJ.current_room.name} \r\n {CJ.current_room.descr}")
-        going_toward = input("which direction are you headed? ")
     elif CJ.current_room.n_to == "default" or CJ.current_room.s_to == "default" or CJ.current_room.e_to == "default" or CJ.current_room.w_to == "default":
         print("what exactly are you trying to do")
-        going_toward = input("which direction are you headed? ")
-# Make a new player object that is currently in the 'outside' room.
+    print(f"{CJ.current_room.name} \r\n {CJ.current_room.descr}")
+    going_toward = input("which direction are you headed? ")
 
+# Make a new player object that is currently in the 'outside' room.
 
 print(f"{CJ.name} quit the game")
 
