@@ -96,8 +96,13 @@ while not going_toward == "q":
     #     CJ.current_room = CJ.current_room.s_to
     isItemAction = going_toward.split(" ")
     
-    if len(isItemAction) > 1 and isItemAction[0] in ["get", "take"]:
-        pass
+    if len(isItemAction) > 1 and isItemAction[0] in ["get", "take"] and isItemAction[1] in CJ.current_room.items.keys():
+        try:
+            keyValue = CJ.current_room.items.pop(isItemAction[1])
+            CJ.addToInventory(isItemAction[1], keyValue)
+            print(f"{isItemAction[1]} added to {CJ.name} inventory")
+        except KeyError:
+            print("This room doesn't contain that item.")
     elif len(isItemAction) > 1 and isItemAction[0] == "drop":
         pass   
     elif going_toward in ["n", "s", "e", "w"] and getattr(CJ.current_room, f"{going_toward}_to") != "default":
