@@ -41,31 +41,31 @@ room['treasure'].s_to = room['narrow']
 # Create Items
 
 items ={
-    'sword' : Item("sword_of_unyielding_effort", """Permanently destroy what it cuts into, effects may be delayed"""),
-    'wand' : Item("wandering_wand", """sheds new information on situations with relavent examples from far off places"""),
-    'shield' : Item("deadman\'s_shield", """Doesn\'t work too well"""),
-    'key_rust' : Item("rusty_key", """Probably useless, maybe rub the rust on your clothes to slow mold grow for when you die here."""),
-    'chandelier' : Item("busted_chandelier", """sharp glass, too sharp to touch"""),
-    'decoder_ring' : Item("theives_ring", """The theif on the team that pillaged this place must have dropped it. It's gold but probably worth more than that."""),
-    'med_root' : Item("herbal_root", """Found on high cliffs and other dangerous spots for the irony"""),
-    'rarest_coins' : Item("Immigrating_coin","""This type of coin was made from strange and famous meteor! And it is element more rare and valuable than gold! you can hear a vibration if you put it near your ear.""")
+    'sword_of_unyielding_effort' : Item("sword_of_unyielding_effort", """Permanently destroy what it cuts into, effects may be delayed"""),
+    'wandering_wand' : Item("wandering_wand", """sheds new information on situations with relavent examples from far off places"""),
+    'deadman\'s_shield' : Item("deadman\'s_shield", """Doesn\'t work too well"""),
+    'rusty_key' : Item("rusty_key", """Probably useless, maybe rub the rust on your clothes to slow mold grow for when you die here."""),
+    'busted_chandelier' : Item("busted_chandelier", """sharp glass, too sharp to touch"""),
+    'theives_decoder_ring' : Item("theives_decoder_ring", """The theif on the team that pillaged this place must have dropped it. It's gold but probably worth more than that."""),
+    'herbal_medicine_root' : Item("herbal_medicine_root", """Found on high cliffs and other dangerous spots for the irony"""),
+    'Immigrating_coin' : Item("Immigrating_coin","""This type of coin was made from strange and famous meteor! And it is element more rare and valuable than gold! you can hear a vibration if you put it near your ear.""")
 }
 
 
 # Add items to rooms
 
     # outside
-room['outside'].storeInRoom(items['sword'].name, items['sword'].descr)
-room['outside'].storeInRoom(items['shield'].name, items['shield'].descr)
+room['outside'].storeInRoom(items['sword_of_unyielding_effort'].name, items['sword_of_unyielding_effort'].descr)
+room['outside'].storeInRoom(items['deadman\'s_shield'].name, items['deadman\'s_shield'].descr)
     # foyer
-room['foyer'].storeInRoom(items['key_rust'].name, items['key_rust'].descr)
-room['foyer'].storeInRoom(items['chandelier'].name, items['chandelier'].descr)
+room['foyer'].storeInRoom(items['rusty_key'].name, items['rusty_key'].descr)
+room['foyer'].storeInRoom(items['busted_chandelier'].name, items['busted_chandelier'].descr)
     #treasure room
-room['treasure'].storeInRoom(items['decoder_ring'].name, items['decoder_ring'].descr)
+room['treasure'].storeInRoom(items['theives_decoder_ring'].name, items['theives_decoder_ring'].descr)
     #overlook
-room['overlook'].storeInRoom(items['med_root'].name, items['med_root'].descr)
+room['overlook'].storeInRoom(items['herbal_medicine_root'].name, items['herbal_medicine_root'].descr)
     #narrow
-room['narrow'].storeInRoom(items['rarest_coins'].name, items['rarest_coins'].descr)
+room['narrow'].storeInRoom(items['Immigrating_coin'].name, items['Immigrating_coin'].descr)
 
 # Main
 #
@@ -100,6 +100,7 @@ while not going_toward == "q":
         try:
             keyValue = CJ.current_room.items.pop(isItemAction[1])
             CJ.addToInventory(isItemAction[1], keyValue)
+            items[isItemAction[1]].on_take(isItemAction[1])
             print(f"{isItemAction[1]} added to {CJ.name} inventory")
         except KeyError:
             print("This room doesn't contain that item.")
@@ -107,7 +108,8 @@ while not going_toward == "q":
         try:
             keyValue = CJ.inventory.pop(isItemAction[1])
             CJ.current_room.storeInRoom(isItemAction[1], keyValue)
-            print(f"{isItemAction[1]} dropped in {CJ.current_room}")
+            items[isItemAction[1]].on_drop(isItemAction[1])
+            print(f"{isItemAction[1]} dropped in {CJ.current_room.name}")
         except KeyError:
             print("No such item in inventory.")
     elif going_toward in ["n", "s", "e", "w"] and getattr(CJ.current_room, f"{going_toward}_to") != "default":
