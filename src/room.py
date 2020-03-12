@@ -20,6 +20,10 @@ class Room:
         self.e_to = "default"
         self.w_to = "default"
         self.items = {}
-    def storeInRoom(self, key, value):
+    #READABILITY CHANGE added That to storeInRoom and removeFromRoom
+    def storeInThatRoom(self, key, value):
         if key not in self.items.keys():
             self.items[key] = value
+    def removeFromThatRoom(self, key):
+        if key in self.items.keys():
+            return self.items.pop(key)

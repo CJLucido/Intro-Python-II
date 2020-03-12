@@ -55,21 +55,22 @@ items ={
 # Add items to rooms
 
     # outside
-room['outside'].storeInRoom(items['sword_of_unyielding_effort'].name, items['sword_of_unyielding_effort'].descr)
-room['outside'].storeInRoom(items['deadman\'s_shield'].name, items['deadman\'s_shield'].descr)
+room['outside'].storeInThatRoom(items['sword_of_unyielding_effort'].name, items['sword_of_unyielding_effort'].descr)
+room['outside'].storeInThatRoom(items['deadman\'s_shield'].name, items['deadman\'s_shield'].descr)
     # foyer
-room['foyer'].storeInRoom(items['rusty_key'].name, items['rusty_key'].descr)
-room['foyer'].storeInRoom(items['busted_chandelier'].name, items['busted_chandelier'].descr)
+room['foyer'].storeInThatRoom(items['rusty_key'].name, items['rusty_key'].descr)
+room['foyer'].storeInThatRoom(items['busted_chandelier'].name, items['busted_chandelier'].descr)
     #treasure room
-room['treasure'].storeInRoom(items['theives_decoder_ring'].name, items['theives_decoder_ring'].descr)
+room['treasure'].storeInThatRoom(items['theives_decoder_ring'].name, items['theives_decoder_ring'].descr)
     #overlook
-room['overlook'].storeInRoom(items['herbal_medicine_root'].name, items['herbal_medicine_root'].descr)
+room['overlook'].storeInThatRoom(items['herbal_medicine_root'].name, items['herbal_medicine_root'].descr)
     #narrow
-room['narrow'].storeInRoom(items['Immigrating_coin'].name, items['Immigrating_coin'].descr)
+room['narrow'].storeInThatRoom(items['Immigrating_coin'].name, items['Immigrating_coin'].descr)
 
 # Main
 #
-CJ = Player("Carlo", room['outside'])
+# DESCRIPTIVE CHANGE from CJ to player_one
+player_one = Player("Carlo", room['outside'])
 
 # 4 cardinal direction INPUT pass to room instance
 # if the room > 0 then pass the room to the player elif n_to == 0 then return "there's nothing over there try again" and input
@@ -86,53 +87,61 @@ CJ = Player("Carlo", room['outside'])
 #         the loop updates the player's current_room with that variable
 #             the adv.py REPL prints the player's name and current_room
 
-going_toward = input("\r\nWhat do you want to do? \r\n\nGo [n] [s] [e] or [w] \r\nCheck Inventory [i] or [inventory] \r\n[take] or [get] \"item\" \r\n[drop] \"item\" \r\n[q]uit the game :") #split on this was delaying my ability to go north from instatiation room..was changing the value of single value commands
+#DESCRIPTIVE CHANGE from going_toward (started with directionality)
+player_action = input("\r\nWhat do you want to do? \r\n\nGo [n] [s] [e] or [w] \r\nCheck Inventory [i] or [inventory] \r\n[take] or [get] \"item\" \r\n[drop] \"item\" \r\n[q]uit the game :") #split on this was delaying my ability to go north from instatiation room..was changing the value of single value commands
 
-while not going_toward == "q": 
-    # changed from the following with lines 3 and 4 repeated for every direction
-    # if going_toward not in ["n", "s", "e", "w"]:
+while not player_action == "q": 
+    #DRY CHANGE changed from the following with lines 3 and 4 repeated for every direction
+    # if player_action not in ["n", "s", "e", "w"]:
     #     print("there's nutin o'er yonder!!")
-        # elif going_toward == "s" and CJ.current_room.s_to != "default":
-    #     CJ.current_room = CJ.current_room.s_to
-    isItemAction = going_toward.split(" ")
+        # elif player_action == "s" and player_one.current_room.s_to != "default":
+    #     player_one.current_room = player_one.current_room.s_to
+    isItemAction = player_action.split(" ")
+    #READABILITY CHANGE from just using isItemAction[1] in code
+    if len(isItemAction) > 1:
+        item_key = isItemAction[1]
     
-    if len(isItemAction) > 1 and isItemAction[0] in ["get", "take"] and isItemAction[1] in CJ.current_room.items.keys():
+    if len(isItemAction) > 1 and isItemAction[0] in ["get", "take"] and item_key in player_one.their_current_room.items.keys():
         try:
-            keyValue = CJ.current_room.items.pop(isItemAction[1])
-            CJ.addToInventory(isItemAction[1], keyValue)
-            items[isItemAction[1]].on_take(isItemAction[1])
-            print(f"{isItemAction[1]} added to {CJ.name} inventory")
+            #READABILITY CHANGE keyValue = player_one.their_current_room.items.pop(item_key)
+            keyValue = player_one.their_current_room.removeFromThatRoom(item_key)
+
+            player_one.addToInventory(item_key, keyValue)
+
+            items[item_key].on_take(item_key)
+
+            # OPP BP CHANGE print(f"{item_key} added to {player_one.name}'s' inventory")
         except KeyError:
             print("This room doesn't contain that item.")
     elif len(isItemAction) > 1 and isItemAction[0] == "drop":
         try:
-            keyValue = CJ.inventory.pop(isItemAction[1])
-            CJ.current_room.storeInRoom(isItemAction[1], keyValue)
-            items[isItemAction[1]].on_drop(isItemAction[1])
-            print(f"{isItemAction[1]} dropped in {CJ.current_room.name}")
+            #READABILITY CHANGE from keyValue = player_one.inventory.pop(item_key)
+            keyValue = player_one.removeFromInventory(item_key)
+
+            player_one.their_current_room.storeInThatRoom(item_key, keyValue)
+
+            items[item_key].on_drop(item_key)
+
+            print(f"{item_key} dropped in {player_one.their_current_room.name}")
         except KeyError:
             print("No such item in inventory.")
-    elif going_toward in ["n", "s", "e", "w"] and getattr(CJ.current_room, f"{going_toward}_to") != "default":
-        CJ.current_room = getattr(CJ.current_room, f"{going_toward}_to")
-    elif going_toward == "i" or going_toward == "inventory":
-        print(f"\r\nInventory: {CJ.inventory}")
+    #ISSUE direction list below not very maintainable, if I want to change the controls I have to change it in both player and room classes as well as here
+    elif player_action in ["n", "s", "e", "w"] and getattr(player_one.their_current_room, f"{player_action}_to") != "default":
+        #READABILITY CHANGE player_one.their_current_room = getattr(player_one.their_current_room, f"{player_action}_to")
+        player_one.movePlayer(player_one.their_current_room, f"{player_action}_to")
+
+        player_one.describesLocation()
+    elif player_action == "i" or player_action == "inventory":
+        #OOP BEST PRACTICE CHANGE from print(f"\r\nInventory: {player_one.inventory}")
+        player_one.listInventory()
     else:  
+        #This OK, I want the world to enforce some rules
         print("\r\nThere's nutin o'er yonder!! \r\nWhat exactly are you trying to do!??!")
 
-    print(f"\r\nCurrent Location: \r\n\n{CJ.current_room.name} \r\n\n{CJ.current_room.descr} \r\n\nItems:{CJ.current_room.items}\r\n\n")
-    going_toward = input("which direction are you headed? ")
+    #OPP and READABILITY following moved to nsew elif print(f"\r\nCurrent Location: \r\n\n{player_one.their_current_room.name} \r\n\n{player_one.current_room.descr} \r\n\nItems:{player_one.current_room.items}\r\n\n")
+    # ^^^ also solves the display issue of showing current location for every action
+    player_action = input("\r\nWhat do you want to do? \r\n\nGo [n] [s] [e] or [w] \r\nCheck Inventory [i] or [inventory] \r\n[take] or [get] \"item\" \r\n[drop] \"item\" \r\n[q]uit the game :")
+   
+print(f"{player_one.name} quit the game")
 
-# Make a new player object that is currently in the 'outside' room.
 
-print(f"{CJ.name} quit the game")
-
-# Write a loop that:
-#
-# * Prints the current room name
-# * Prints the current description (the textwrap module might be useful here).
-# * Waits for user input and decides what to do.
-#
-# If the user enters a cardinal direction, attempt to move to the room there.
-# Print an error message if the movement isn't allowed.
-#
-# If the user enters "q", quit the game.
