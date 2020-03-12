@@ -104,7 +104,12 @@ while not going_toward == "q":
         except KeyError:
             print("This room doesn't contain that item.")
     elif len(isItemAction) > 1 and isItemAction[0] == "drop":
-        pass   
+        try:
+            keyValue = CJ.inventory.pop(isItemAction[1])
+            CJ.current_room.storeInRoom(isItemAction[1], keyValue)
+            print(f"{isItemAction[1]} dropped in {CJ.current_room}")
+        except KeyError:
+            print("No such item in inventory.")
     elif going_toward in ["n", "s", "e", "w"] and getattr(CJ.current_room, f"{going_toward}_to") != "default":
         CJ.current_room = getattr(CJ.current_room, f"{going_toward}_to")
     elif going_toward == "i" or going_toward == "inventory":

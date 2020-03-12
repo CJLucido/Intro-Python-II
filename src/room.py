@@ -21,4 +21,5 @@ class Room:
         self.w_to = "default"
         self.items = {}
     def storeInRoom(self, key, value):
-        self.items[key] = value
+        if key not in self.items.keys():
+            self.items[key] = value
