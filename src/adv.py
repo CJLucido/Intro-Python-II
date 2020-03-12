@@ -91,7 +91,7 @@ player_one = Player("Carlo", room['outside'], 10000)
 #DESCRIPTIVE CHANGE from going_toward (started with directionality)
 player_action = input("\r\nWhat do you want to do? \r\n\nGo [n] [s] [e] or [w] \r\nCheck Inventory [i] or [inventory] \r\n[take] or [get] \"item\" \r\n[drop] \"item\" \r\n[q]uit the game :") #split on this was delaying my ability to go north from instatiation room..was changing the value of single value commands
 
-while not player_action == "q": 
+while not player_action == "q" and player_one.their_worth < 110499: 
     #DRY CHANGE changed from the following with lines 3 and 4 repeated for every direction
     # if player_action not in ["n", "s", "e", "w"]:
     #     print("there's nutin o'er yonder!!")
@@ -150,7 +150,9 @@ while not player_action == "q":
     # ^^^ also solves the display issue of showing current location for every action
     print(f"{player_one.name}'s worth: {player_one.their_worth}")
     player_action = input("\r\nWhat do you want to do? \r\n\nGo [n] [s] [e] or [w] \r\nCheck Inventory [i] or [inventory] \r\n[take] or [get] \"item\" \r\n[drop] \"item\" \r\n[q]uit the game :")
-    
-print(f"{player_one.name} quit the game")
+if player_action == "q":     
+    print(f"{player_one.name} quit the game")
+elif player_one.their_worth == 110500:
+    print(f"{player_one.name} won the game!")
 
 
