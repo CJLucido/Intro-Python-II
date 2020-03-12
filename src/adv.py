@@ -41,15 +41,31 @@ room['treasure'].s_to = room['narrow']
 # Create Items
 
 items ={
-    'sword' : Item("sword of unyielding effort", """Permanently destroy what it cuts into, effects may be delayed"""),
-    'wand' : Item("wandering wand", """sheds new information on situations with relavent examples from far off places""")
+    'sword' : Item("sword_of_unyielding_effort", """Permanently destroy what it cuts into, effects may be delayed"""),
+    'wand' : Item("wandering_wand", """sheds new information on situations with relavent examples from far off places"""),
+    'shield' : Item("deadman\'s_shield", """Doesn\'t work too well"""),
+    'key_rust' : Item("rusty_key", """Probably useless, maybe rub the rust on your clothes to slow mold grow for when you die here."""),
+    'chandelier' : Item("busted_chandelier", """sharp glass, too sharp to touch"""),
+    'decoder_ring' : Item("theives_ring", """The theif on the team that pillaged this place must have dropped it. It's gold but probably worth more than that."""),
+    'med_root' : Item("herbal_root", """Found on high cliffs and other dangerous spots for the irony"""),
+    'rarest_coins' : Item("Immigrating_coin","""This type of coin was made from strange and famous meteor! And it is element more rare and valuable than gold! you can hear a vibration if you put it near your ear.""")
 }
 
 
 # Add items to rooms
+
+    # outside
 room['outside'].storeInRoom(items['sword'].name, items['sword'].descr)
-
-
+room['outside'].storeInRoom(items['shield'].name, items['shield'].descr)
+    # foyer
+room['foyer'].storeInRoom(items['key_rust'].name, items['key_rust'].descr)
+room['foyer'].storeInRoom(items['chandelier'].name, items['chandelier'].descr)
+    #treasure room
+room['treasure'].storeInRoom(items['decoder_ring'].name, items['decoder_ring'].descr)
+    #overlook
+room['overlook'].storeInRoom(items['med_root'].name, items['med_root'].descr)
+    #narrow
+room['narrow'].storeInRoom(items['rarest_coins'].name, items['rarest_coins'].descr)
 
 # Main
 #
@@ -70,17 +86,28 @@ CJ = Player("Carlo", room['outside'])
 #         the loop updates the player's current_room with that variable
 #             the adv.py REPL prints the player's name and current_room
 
-going_toward = input("which direction are you headed? ")
-#while NOT q, continue running file
+going_toward = input("\r\nWhat do you want to do? \r\n\nGo [n] [s] [e] or [w] \r\nCheck Inventory [i] or [inventory] \r\n[take] or [get] \"item\" \r\n[drop] \"item\" \r\n[q]uit the game :") #split on this was delaying my ability to go north from instatiation room..was changing the value of single value commands
+
 while not going_toward == "q": 
+    # changed from the following with lines 3 and 4 repeated for every direction
     # if going_toward not in ["n", "s", "e", "w"]:
     #     print("there's nutin o'er yonder!!")
-
-    if going_toward in ["n", "s", "e", "w"] and getattr(CJ.current_room, f"{going_toward}_to") != "default":
+        # elif going_toward == "s" and CJ.current_room.s_to != "default":
+    #     CJ.current_room = CJ.current_room.s_to
+    isItemAction = going_toward.split(" ")
+    
+    if len(isItemAction) > 1 and isItemAction[0] in ["get", "take"]:
+        pass
+    elif len(isItemAction) > 1 and isItemAction[0] == "drop":
+        pass   
+    elif going_toward in ["n", "s", "e", "w"] and getattr(CJ.current_room, f"{going_toward}_to") != "default":
         CJ.current_room = getattr(CJ.current_room, f"{going_toward}_to")
+    elif going_toward == "i" or going_toward == "inventory":
+        print(f"\r\nInventory: {CJ.inventory}")
     else:  
-        print("\r\n There's nutin o'er yonder!! \r\n what exactly are you trying to do")
-    print(f"\r\nCurrent Location: \r\n {CJ.current_room.name} \r\n {CJ.current_room.descr} \r\nItems:{CJ.current_room.items}")
+        print("\r\nThere's nutin o'er yonder!! \r\nWhat exactly are you trying to do!??!")
+
+    print(f"\r\nCurrent Location: \r\n\n{CJ.current_room.name} \r\n\n{CJ.current_room.descr} \r\n\nItems:{CJ.current_room.items}\r\n\n")
     going_toward = input("which direction are you headed? ")
 
 # Make a new player object that is currently in the 'outside' room.
