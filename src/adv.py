@@ -1,6 +1,7 @@
 from room import Room
 from player import Player
 from item import Item
+from item import Treasure
 
 # Declare all the rooms
 
@@ -46,9 +47,9 @@ items ={
     'deadman\'s_shield' : Item("deadman\'s_shield", """Doesn\'t work too well"""),
     'rusty_key' : Item("rusty_key", """Probably useless, maybe rub the rust on your clothes to slow mold grow for when you die here."""),
     'busted_chandelier' : Item("busted_chandelier", """sharp glass, too sharp to touch"""),
-    'theives_decoder_ring' : Item("theives_decoder_ring", """The theif on the team that pillaged this place must have dropped it. It's gold but probably worth more than that."""),
+    'theives_decoder_ring' : Treasure("theives_decoder_ring", """The theif on the team that pillaged this place must have dropped it. It's gold but probably worth more than that.""", 500),
     'herbal_medicine_root' : Item("herbal_medicine_root", """Found on high cliffs and other dangerous spots for the irony"""),
-    'Immigrating_coin' : Item("Immigrating_coin","""This type of coin was made from strange and famous meteor! And it is element more rare and valuable than gold! you can hear a vibration if you put it near your ear.""")
+    'Immigrating_coin' : Treasure("Immigrating_coin","""This type of coin was made from strange and famous meteor! And it is element more rare and valuable than gold! you can hear a vibration if you put it near your ear.""", 100000)
 }
 
 
@@ -70,7 +71,7 @@ room['narrow'].storeInThatRoom(items['Immigrating_coin'].name, items['Immigratin
 # Main
 #
 # DESCRIPTIVE CHANGE from CJ to player_one
-player_one = Player("Carlo", room['outside'])
+player_one = Player("Carlo", room['outside'], 10000)
 
 # 4 cardinal direction INPUT pass to room instance
 # if the room > 0 then pass the room to the player elif n_to == 0 then return "there's nothing over there try again" and input
@@ -105,10 +106,17 @@ while not player_action == "q":
         try:
             #READABILITY CHANGE keyValue = player_one.their_current_room.items.pop(item_key)
             keyValue = player_one.their_current_room.removeFromThatRoom(item_key)
+            #order matters, must move worth around before ensuring player has item
+            if type(items[item_key]) == Treasure:
+                items[item_key].changePlayerWorth(item_key, player_one, player_one.inventory)
+            else:
+                pass 
 
             player_one.addToInventory(item_key, keyValue)
 
             items[item_key].on_take(item_key)
+
+
 
             # OPP BP CHANGE print(f"{item_key} added to {player_one.name}'s' inventory")
         except KeyError:
@@ -140,8 +148,9 @@ while not player_action == "q":
 
     #OPP and READABILITY following moved to nsew elif print(f"\r\nCurrent Location: \r\n\n{player_one.their_current_room.name} \r\n\n{player_one.current_room.descr} \r\n\nItems:{player_one.current_room.items}\r\n\n")
     # ^^^ also solves the display issue of showing current location for every action
+    print(f"{player_one.name}'s worth: {player_one.their_worth}")
     player_action = input("\r\nWhat do you want to do? \r\n\nGo [n] [s] [e] or [w] \r\nCheck Inventory [i] or [inventory] \r\n[take] or [get] \"item\" \r\n[drop] \"item\" \r\n[q]uit the game :")
-   
+    
 print(f"{player_one.name} quit the game")
 
 

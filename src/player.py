@@ -9,11 +9,12 @@
 # add inventory list of items
 
 class Player:
-    def __init__(self, name, their_current_room):
+    def __init__(self, name, their_current_room, their_worth):
         self.name = name
         #READABILITY CHANGE from current_room
         self.their_current_room = their_current_room
         self.inventory = {}
+        self.their_worth = their_worth
     def addToInventory(self, key, value):
         if key not in self.inventory.keys():
             self.inventory[key] = value
